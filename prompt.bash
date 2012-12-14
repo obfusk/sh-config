@@ -2,7 +2,7 @@
 #
 # File        : ~/cfg/prompt.bash
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2012-12-11
+# Date        : 2012-12-14
 #
 # Copyright   : Copyright (C) 2012  Felix C. Stegerman
 # Licence     : GPLv2
@@ -27,23 +27,39 @@
 #
 # --                                                            # }}}1
 
-function __mkprompt ()                                          # {{{1
+function __colour ()                                            # {{{1
 {
-  local prompt red grn wht non
-
-  prompt='[GRN\uNON@RED\hNON (WHT\jNONj WHT$?NON?) WHT\wNON'
-  prompt+='$( __git_ps1 )]\n\$ '
+  local red yll grn blu pur wht non
 
   red='\\\[\\033\[0;31m\\\]'
+  yll='\\\[\\033\[1;33m\\\]'
   grn='\\\[\\033\[0;32m\\\]'
-  wht='\\\[\\033\[0;37m\\\]'
+  blu='\\\[\\033\[0;34m\\\]'
+  pur='\\\[\\033\[0;35m\\\]'
+  wht='\\\[\\033\[1;37m\\\]'
   non='\\\[\\033\[0m\\\]'
 
-  echo "$prompt" \
-    | sed " s!RED!$red!g; s!GRN!$grn!g; s!WHT!$wht!g; s!NON!$non!g; "
+  sed " s!RED!$red!g; s!YLL!$yll!g; s!GRN!$grn!g; s!BLU!$blu!g;
+        s!PUR!$pur!g; s!WHT!$wht!g; s!NON!$non!g; "
 }
                                                                 # }}}1
 
-PS1="$( __mkprompt )"
+function __git_ps1_flx ()
+{
+  local c="$1" n="$2" g="$( __git_ps1 %s )"
+  [ -n "$g" ] && echo " ($c$g$n)"
+}
+
+# --
+
+    GIT_PS1_SHOWDIRTYSTATE=yes
+    GIT_PS1_SHOWSTASHSTATE=yes
+GIT_PS1_SHOWUNTRACKEDFILES=yes
+      GIT_PS1_SHOWUPSTREAM=auto
+
+__prompt='[PUR\uNON@RED\hNON (WHT\jNONj WHT$?NON?) YLL\wNON'
+__prompt+='$( __git_ps1_flx "BLU" "NON" )]\n\$ '
+
+PS1="$( echo "$__prompt" | __colour )"
 
 # vim: set tw=70 sw=2 sts=2 et fdm=marker :
